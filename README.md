@@ -15,3 +15,6 @@ Features:
 
 When playing, the 'Home' button must be pressed twice in order to return to the
 Home screen; this avoids accidentally clicking it while playing.
+
+A server is not required to play the game, but an online version can be
+played [here](https://deverac.github.io/concentration-game/).
