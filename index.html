@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes"> <!-- Request fullscreen on iOS -->
+<style type='text/css'>
+#allpics {
+    width: 90vw;
+    height: 100vh;
+    font-size: 4em;
+    overflow: scroll;
+}
+#cards {
+    margin: 0;
+    padding: 0;
+}
+#checker {
+    position: absolute;
+    visibility: hidden;
+    height: auto;
+    width: auto;
+    white-space: nowrap;
+}
+#clock {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-weight: bold;
+    font-size: large;
+    padding: 0.5em;
+    background-color: rgba(100, 100, 100, 0.4);
+    pointer-events: none;
+}
+#help {
+    width: 100vw;
+    height: 100vh;
+    overflow-y: scroll;
+}
+#help p {
+    margin: 1em;
+}
+#home {
+    text-align: center;
+}
+#home button {
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+    margin: 5px;
+    border: 0.1px solid white;
+    border-radius: 10px;
+    font-weight: smaller;
+    width: 100px;
+    font-size: 18px;
+    padding: 5px;
+}
+#home p {
+    margin-top: 2em;
+}
+#homeBtn {
+    position: absolute;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255,255,255,0.4);
+    color: black;
+    border-radius: 4px;
+    border: 0.1px solid white;
+}
+#moves {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-weight: bold;
+    font-size: large;
+    padding: 0.5em;
+    background-color: rgba(100, 100, 100, 0.4);
+    pointer-events: none;
+}
+#stats {
+   position: absolute;
+   height: 1px;
+   z-index: 100;
+   width: 100%;
+}
+#tbl {
+   width: 100vw;
+   height: 100vh;
+   margin: 0;
+}
+body {
+    background-image: linear-gradient(to bottom, #4481eb 0%, #04bedd 100%);
+    padding: 0;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    font-family: sans-serif;
+}
+td {
+    padding: 3px;
+    height: 1%;
+}
+.animcard {
+    transition: transform 0.3s;
+}
+.card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+}
+.card.isflipped {
+    transform: rotateY(180deg);
+}
+.cardback0 {
+    background-color: lightblue;
+}
+.cardback1 {
+    background: linear-gradient(45deg, #4f46e4 0%, #4f46e4 5%,transparent 5%, transparent 10%, #4f46e4 10%, #4f46e4 15%,transparent 15%,transparent 20%, #4f46e4 20%, #4f46e4 25%,transparent 25%,transparent 30%, #4f46e4 30%, #4f46e4 35%,transparent 35%,transparent 40%, #4f46e4 40%, #4f46e4 45%,transparent 45%,transparent 50%, #4f46e4 50%, #4f46e4 55%,transparent 55%,transparent 60%, #4f46e4 60%, #4f46e4 65%,transparent 65%,transparent 70%, #4f46e4 70%, #4f46e4 75%,transparent 70%,transparent 80%, #4f46e4 80%, #4f46e4 85%,transparent 85%,transparent 90%, #4f46e4 90%, #4f46e4 95%,transparent 95%), linear-gradient(135deg, #4f46e4 0%, #4f46e4 5%,transparent 5%, transparent 10%, #4f46e4 10%, #4f46e4 15%,transparent 15%,transparent 20%, #4f46e4 20%, #4f46e4 25%,transparent 25%,transparent 30%, #4f46e4 30%, #4f46e4 35%,transparent 35%,transparent 40%, #4f46e4 40%, #4f46e4 45%,transparent 45%,transparent 50%, #4f46e4 50%, #4f46e4 55%,transparent 55%,transparent 60%, #4f46e4 60%, #4f46e4 65%,transparent 65%,transparent 70%, #4f46e4 70%, #4f46e4 75%,transparent 70%,transparent 80%, #4f46e4 80%, #4f46e4 85%,transparent 85%,transparent 90%, #4f46e4 90%, #4f46e4 95%,transparent 95%);
+    background-size: 0.75em 0.75em;
+    background-color: lightblue;
+    opacity: 1
+}
+.cardback2 {
+    background: radial-gradient(circle at top left,transparent 25%,#4f46e4 25.5%, #4f46e4 36%, transparent 37%, transparent 100%),radial-gradient(circle at bottom right,transparent 34%,#4f46e4 34.5%, #4f46e4 45.5%, transparent 46%, transparent 100%);
+    background-size: 1em 1em;
+    background-color: lightblue;
+    opacity: 1
+}
+.cardback3 {
+    background: radial-gradient(circle at top right,transparent 10%,#4f46e4 10%, #4f46e4 20%, transparent 21%), radial-gradient(circle at left bottom,transparent 10%,#4f46e4 10%,#4f46e4 20%, transparent 21%),radial-gradient(circle at top left,transparent 10%,#4f46e4 10%,#4f46e4 20%, transparent 21%), radial-gradient(circle at right bottom,transparent 10%,#4f46e4 10%,#4f46e4 20%, transparent 21%), radial-gradient(circle at center,#4f46e4 30%, transparent 31%);
+    background-size: 0.5em 0.5em;
+    background-color: lightblue;
+    opacity: 1
+}
+.cardback4 {
+    background: linear-gradient(45deg, lightblue 25%, transparent 25%), linear-gradient(315deg, lightblue 25%, transparent 25%) ,linear-gradient(45deg, transparent 24%,#4f46e4 25%, #4f46e4 30%, transparent 31%, transparent 39%,#4f46e4 40%, #4f46e4 45%, transparent 45%),linear-gradient(315deg, transparent 24%,#4f46e4 25%, #4f46e4 30%, transparent 31%, transparent 39%,#4f46e4 40%, #4f46e4 45%, transparent 45%);
+    background-size: 0.55em 0.55em;
+    background-color: lightblue;
+    opacity: 1
+}
+.cardface {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden;
+    border-radius: 5px;
+}
+.cardfront {
+    display: flex;
+    background-color: #cde7f0;
+    transform: rotateY(180deg);
+    user-select: none;
+}
+.cardfront span {
+    margin: auto auto;
+}
+.scene {
+    perspective: 1000px;
+    width: 100%;
+    height: 100%;
+}
+</style>
+<script type='text/javascript'>
+// Unicode charactors: https://en.wikipedia.org/wiki/Miscellaneous_Symbols_and_Pictographs
+// CSS flipping technique: https://3dtransforms.desandro.com/card-flip
+// CSS patterns for card backs: https://superdesigner.co/tools/css-backgrounds
+// Style of home page: https://github.com/VectorStatic/Memory-Matching-Game
+
+function addTouchedCard(el, ch) { TOUCHED_CARDS.push([el, ch]); }
+function enableAnimations() { document.querySelectorAll('#tbl .card').forEach(el => el.classList.add('animcard'));}
+function flipCard(el) { el.classList.toggle('isflipped'); }
+function getCardHeight() { return getComputedStyle(document.querySelector('#tbl .card')).getPropertyValue('height'); }  // Returns value with 'px' suffix.
+function getCardSize() { return Math.min(parseInt(getCardWidth()), parseInt(getCardHeight()));}
+function getCardWidth() { return getComputedStyle(document.querySelector('#tbl .card')).getPropertyValue('width'); }  // Returns value with 'px' suffix.
+function getId(id) { return document.getElementById(id); }
+function havePair() { return TOUCHED_CARDS.length == 2 && !IS_TRIPLES; }
+function haveSet() { return TOUCHED_CARDS.length == 3 && IS_TRIPLES; }
+function hide(id) { getId(id).style.display='none'; }
+function hideAllPicsPage() { hide('allpics'); }
+function hideHelpPage() { hide('help'); }
+function hideHomePage() { hide('home'); }
+function hidePlayPage() { hide('play'); }
+function isCardFlipped(el) { return el.classList.contains('isflipped'); }
+function roundCardCorners(cardSize) { document.querySelectorAll('#tbl .cardface').forEach(el => el.style.borderRadius = parseInt(cardSize/10)+'px'); }
+function setCardLayout(cols, rows) { getId('cards').innerHTML = generateCardLayout(cols, rows); }
+function setPicSize(cardSize) { getId('cards').style.fontSize = (cardSize * 0.6)+'px'; }
+function show(id) { getId(id).style.display='block'; }
+function showAllPicsPage() {  hideHomePage(); hidePlayPage(); hideHelpPage(); show('allpics'); }
+function showHelpPage() { hideHomePage(); hidePlayPage(); hideAllPicsPage(); show('help'); }
+function showHomePage() { hideHelpPage(); hidePlayPage(); hideAllPicsPage(); show('home'); }
+function showPlayPage() {  hideHomePage(); hideHelpPage(); hideAllPicsPage(); show('play'); }
+function stopClock() { clearInterval(TIMER); }
+function unflipCards() { TOUCHED_CARDS.forEach(item => item[0].classList.remove('isflipped')); }
+function updateClock(str) { getId('clock').innerText = str; }
+function updateMoves() { getId('moves').innerText = NUM_TURNS + ' ' + '('+NUM_MATCHES + ' / ' + MAX_MATCHES + ')'; }
+
+function allPics() {
+    showAllPicsPage();
+    getId('allpics').innerText = PICS.join('');
+}
+
+function checkMatch() {
+    if (isAllFlippedCardsMatch()) {
+        NUM_MATCHES++;
+        if (NUM_MATCHES == MAX_MATCHES) {
+            stopClock();
+        }
+    } else {
+        unflipCards();
+    }
+    TOUCHED_CARDS = [];
+    NUM_TURNS++;
+    updateMoves();
+}
+
+function generateCardLayout(cols, rows) {
+    const deck = getCardDeck(cols, rows);
+    var str = '';
+    str += "<table id='tbl' cellspacing='0'>";
+    for (var r=0; r<rows; r++) {
+        str += '<tr>';
+        for (var c=0; c<cols; c++) {
+            var ch = deck[r*cols + c];
+            str += "<td>";
+            str += "  <div class='scene'>";
+            str += "    <div class='card' onclick='touchCard(this, \""+ch+"\")'>";
+            str += "      <div class='cardface cardback"+PATTERN_NUM+"'></div>";
+            str += "      <div class='cardface cardfront'><span>"+ch+"</span></div>";
+            str += '    </div>';
+            str += '  </div>';
+            str += '</td>';
+        }
+        str += '</tr>';
+    }
+    str += '</table>';
+    return str;
+}
+
+// If there are not enough characters to allow the maximum number of matches,
+// append (randomly chosen) ASCII characters until there are.
+function getCardDeck(cols, rows) {
+    const cnt = (IS_TRIPLES ? 3 : 2);
+    MAX_MATCHES = (cols * rows) / cnt;
+    const pool = PICS;
+
+    // Ensure there are enough characters in pool.
+    const altChars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789'.split(''); // Zero and 'O' are excluded.
+    while (pool.length < MAX_MATCHES) {
+        const ch = altChars[Math.floor(Math.random() * altChars.length)];
+        if (!pool.includes(ch)) {
+            pool.push(ch);
+        }
+    }
+
+    // Randomly select characters from pool.
+    var chars = [];
+    while (chars.length < MAX_MATCHES) {
+        const ch = pool[Math.floor(Math.random() * pool.length)];
+        if (!chars.includes(ch)) {
+            chars.push(ch);
+        }
+    }
+
+    // Create copies of characters to create 'deck' of cards.
+    var deck = [];
+    chars.forEach(ch => {
+        for (var k=0; k<cnt; k++) {
+            deck.push(ch);
+        }
+    });
+
+    return shuffleCards(deck);
+}
+
+function help() {
+    showHelpPage();
+}
+
+function home() {
+    stopClock();
+    showHomePage();
+}
+
+function home2() {
+    if (IS_HOME_TOUCHED) {
+        home();
+    } else {
+        IS_HOME_TOUCHED = true;
+    }
+}
+
+function isAllFlippedCardsMatch() {
+    if (havePair()) return TOUCHED_CARDS[0][1] == TOUCHED_CARDS[1][1];
+    if (haveSet()) return TOUCHED_CARDS[0][1] == TOUCHED_CARDS[1][1] && TOUCHED_CARDS[1][1] == TOUCHED_CARDS[2][1];
+    return false;
+}
+
+function nextPatternNum(el) {
+    PATTERN_NUM = (++PATTERN_NUM % NUM_PATTERNS);
+    el.innerText = 'Pattern '+PATTERN_NUM;
+}
+
+function play(cols, rows) {
+    IS_HOME_TOUCHED = false;
+    TOUCHED_CARDS = [];
+    NUM_MATCHES = 0;
+    MAX_MATCHES = -1;
+    NUM_TURNS = 0;
+    TIMER = null;
+    TIME_BEGIN = 0;
+
+    showPlayPage(); // Must be enabled to comptue card size.
+
+    setCardLayout(cols, rows);
+
+    const sz = getCardSize();
+    setPicSize(sz);
+    roundCardCorners(sz);
+
+    if (IS_ANIMATE) {
+        enableAnimations();
+    }
+
+    updateMoves();
+    updateClock('00:00');
+}
+
+function setPics() {
+    const srcpics = [
+        '0x1f302', // umbrella
+        '0x1f308', // rainbow
+        '0x1f32d', // hot dog
+        '0x1f334', // palm tree
+        '0x1f335', // cactus
+        '0x1f336', // chili pepper
+        '0x1f337', // tulip
+        '0x1f339', // rose
+        '0x1f33a', // hibiscus
+        '0x1f33b', // hellianthus
+        '0x1f340', // shamrock
+        '0x1f344', // mushroom
+        '0x1f345', // tomato
+        '0x1f347', // grapes
+        '0x1f349', // watermelon wedge
+        '0x1f34a', // peach
+        '0x1f34b', // lemon
+        '0x1f34d', // pineapple
+        '0x1f34e', // red apple
+        '0x1f350', // pear
+        '0x1f352', // cherries
+        '0x1f353', // strawberry
+        '0x1f354', // hamburger
+        '0x1f355', // pizza
+        '0x1f35e', // bread loaf
+        '0x1f368', // sundae
+        '0x1f369', // donut
+        '0x1f36a', // chocolate chip cookie
+        '0x1f36b', // chocalate bar
+        '0x1f36c', // starlite mint
+        '0x1f377', // wine glass
+        '0x1f37a', // beer mug
+        '0x1f380', // ribbon
+        '0x1f381', // present
+        '0x1f382', // cake
+        '0x1f3a8', // pallette
+        '0x1f3a9', // top hat
+        '0x1f3af', // dart board
+        '0x1f3b2', // 6 sided die
+        '0x1f3b5', // music note
+        '0x1f3b8', // guitar
+        '0x1f3c6', // trophy
+        '0x1f407', // rabbit
+        '0x1f40b', // whale
+        '0x1f40c', // snail
+        '0x1f418', // elephant
+        '0x1f419', // octopus
+        '0x1f41c', // ant
+        '0x1f41d', // bee
+        '0x1f41e', // ladybug
+        '0x1f41f', // fish
+        '0x1f422', // turtle
+        '0x1f427', // penguin
+    ].map(cod => String.fromCodePoint(cod));
+
+    const chkId = getId('checker');
+    chkId.style.fontSize = '30pt';
+
+    chkId.innerText = '\uffff'; // FFFF is defined to be an invalid Unicode char.;
+    const bad_hgt = chkId.clientHeight;
+    const bad_wid = chkId.clientWidth;
+
+    PICS = [];
+    srcpics.forEach(pic => {
+        chkId.innerText = pic;
+        if (chkId.clientHeight != bad_hgt || chkId.clientWidth != bad_wid) {
+            PICS.push(pic);
+        }
+    });
+    chkId.style.display='none';
+}
+
+function shuffleCards(array) { // Fisher-Yates shuffle.
+    for (var i = array.length - 1; i >= 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1)); // Random item.
+        [array[i], array[j]] = [array[j], array[i]]; // Swap.
+    }
+    return array;
+}
+
+function startClock() {
+    if (!TIMER) {
+        TIME_BEGIN = new Date();
+        TIMER = setInterval(function() {
+            const seconds = parseInt((new Date() - TIME_BEGIN)/1000);
+            const hrs = parseInt(seconds / 3600);
+            const min = parseInt((seconds - (hrs * 3600)) / 60);
+            const sec = seconds - (hrs * 3600) - (min * 60);
+
+            const sec_str = ('0'+sec).slice(-2);
+            const min_str = ('0'+min).slice(-2) + ':';
+            const hr_str = (hrs > 0 ? hrs+':' : '');
+            updateClock(hr_str + min_str + sec_str);
+        }, 1000);
+    }
+}
+
+function toggleAnimate(el) {
+    IS_ANIMATE = !IS_ANIMATE;
+    el.innerText = (IS_ANIMATE ? 'Animate' : 'Instant');
+}
+
+function togglePairs(el) {
+    IS_TRIPLES = !IS_TRIPLES;
+    el.innerText = (IS_TRIPLES ? 'Triples' : 'Pairs');
+}
+
+function touchCard(el, ch) {
+    IS_HOME_TOUCHED = false;
+    startClock()
+
+    if (IS_ANIMATE) {
+        if (!isCardFlipped(el) && !havePair() && !haveSet()) {
+            flipCard(el);
+            addTouchedCard(el, ch);
+            if (havePair() || haveSet()) {
+                setTimeout(checkMatch, UNFLIP_DELAY_MS);
+            }
+        }
+    } else {
+        if (havePair() || haveSet()) {
+            NUM_TURNS++;
+            updateMoves()
+            unflipCards();
+            TOUCHED_CARDS = [];
+        } else if (!isCardFlipped(el)) {
+            flipCard(el);
+            addTouchedCard(el, ch);
+            if (isAllFlippedCardsMatch()) {
+                NUM_TURNS++;
+                NUM_MATCHES++;
+                updateMoves()
+                if (NUM_MATCHES == MAX_MATCHES) {
+                    stopClock();
+                }
+                TOUCHED_CARDS = [];
+            }
+        }
+    }
+}
+
+const NUM_PATTERNS = 5;
+const UNFLIP_DELAY_MS = 800;
+
+var PICS = [];
+var TOUCHED_CARDS = [];
+var IS_TRIPLES = false;
+var IS_ANIMATE = true;
+var NUM_MATCHES = 0;
+var MAX_MATCHES = -1;
+var NUM_TURNS = 0;
+var TIMER = null;
+var TIME_BEGIN = 0;
+var PATTERN_NUM = 0;
+var IS_HOME_TOUCHED = false;
+
+function init() {
+    home();
+    setPics();
+}
+</script>
+</head>
+<body onload='init()'>
+
+<div id='home'>
+<center><h2>Memory Game</h2></center>
+<p>
+    <button onclick='togglePairs(this)'>Pairs</button>
+    <button onclick='toggleAnimate(this)'>Animate</button>
+    <button onclick='nextPatternNum(this)'>Pattern 0</button>
+</p>
+<p>
+    <button onclick='play(3, 4)'>12 cards</button>
+    <button onclick='play(3, 6)'>18 cards</button>
+    <button onclick='play(4, 6)'>24 cards</button>
+    <button onclick='play(5, 6)'>30 cards</button>
+    <button onclick='play(6, 6)'>36 cards</button>
+    <button onclick='play(6, 7)'>42 cards</button>
+    <button onclick='play(6, 8)'>48 cards</button>
+    <button onclick='play(6, 9)'>54 cards</button>
+</p>
+<p>
+    <button onclick='help()'>Help</button>
+    <button onclick='allPics()'>Pics</button>
+</p>
+</div>
+
+<div id='play'>
+    <div id='stats'>
+        <div id='moves'></div>
+        <button id='homeBtn' onclick='home2()'>Home</button>
+        <div id='clock'></div>
+    </div>
+
+    <div id='cards'></div>
+</div>
+
+<div id='allpics' onclick='home()'></div>
+
+<div id='help' onclick='home()'>
+
+<center><h2>Help</h2></center>
+
+<p>
+Click the 'Pairs' button to toggle between 'Pairs' and 'Triples'; this
+determines whether two or three upturned cards must match.
+</p>
+
+<p>
+Click the 'Animate' button to toggle between 'Animate' and 'Instant'; this
+determines whether cards are animated when they are flipped.
+</p>
+
+<p>
+Click the 'Pattern 0' button to choose the pattern number; the displayed number
+determines the pattern that is shown on the backs of the cards.
+</p>
+
+<p>
+Click the 'Help' button to display this help text; touch the screen to exit.
+</p>
+
+<p>
+Click the 'Pics' button to display all the pics that are defined; touch the screen to exit.
+</p>
+
+<p>
+Click any 'N cards' button to start a new game with the indicated number of cards.
+</p>
+
+<p>
+While playing, the upper-left corner shows the number of moves, the number of
+matches that have been found, and the total number of matches that must be found.
+The upper-right corner shows the elapsed time. The 'Home' button (top, center of
+screen) must be pressed twice to exit; this behavior prevents accidental clicks while playing.
+</p>
+
+</div>
+
+<div id='checker'></div>
+
+</body>
+</html>
